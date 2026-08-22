@@ -61,6 +61,10 @@ def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_torque,
       "ADAS_ACIAnglTqRedcGainVal": apply_torque if lat_active else 0,
     }
 
+  # OVERRIDE DAW VALUES AFTER ANGLE MERGE
+  values["DAW_WrnMsgSta"] = 0  # Forces coffee cup popup status to 0 (No Warning)
+  values["DAW_SysSta"] = 1     # Forces fatigue level to 1 (Normal/Attentive)
+
   ret = []
   if CP.flags & HyundaiFlags.CANFD_LKA_STEER_MSG:
     lkas_msg = "LKAS_ALT" if CP.flags & HyundaiFlags.CANFD_LKA_STEER_MSG_ALT else "LKAS"

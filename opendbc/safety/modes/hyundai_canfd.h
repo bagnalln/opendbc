@@ -294,6 +294,7 @@ static safety_config hyundai_canfd_init(uint16_t param) {
   const uint16_t HYUNDAI_PARAM_CANFD_LKA_STEER_MSG_ALT = 128;
   const uint16_t HYUNDAI_PARAM_CANFD_ALT_BUTTONS = 32;
   const uint16_t HYUNDAI_PARAM_CANFD_ANGLE_STEERING = 1024;
+  const uint16_t HYUNDAI_PARAM_CANFD_DAW_SUPPRESSION = 2048;
 
   static const CanMsg HYUNDAI_CANFD_LKA_STEER_MSG_TX_MSGS[] = {
     HYUNDAI_CANFD_LKA_STEER_MSG_COMMON_TX_MSGS(0, 1)
@@ -301,6 +302,11 @@ static safety_config hyundai_canfd_init(uint16_t param) {
 
   static const CanMsg HYUNDAI_CANFD_LKA_STEER_MSG_ALT_TX_MSGS[] = {
     HYUNDAI_CANFD_LKA_STEER_MSG_ALT_COMMON_TX_MSGS(0, 1)
+  };
+
+  static const CanMsg HYUNDAI_CANFD_LKA_STEER_MSG_ALT_DAW_TX_MSGS[] = {
+    HYUNDAI_CANFD_LKA_STEER_MSG_ALT_COMMON_TX_MSGS(0, 1)
+    {0x11A, 1, 16, .check_relay = false},  // FR_CMR_01_10ms warning-only override on E-CAN
   };
 
   static const CanMsg HYUNDAI_CANFD_LKA_STEER_MSG_LONG_TX_MSGS[] = {
@@ -345,6 +351,7 @@ static safety_config hyundai_canfd_init(uint16_t param) {
   hyundai_canfd_angle_steering = GET_FLAG(param, HYUNDAI_PARAM_CANFD_ANGLE_STEERING);
   // TODO: test this restriction
   hyundai_canfd_lka_steer_msg_alt = GET_FLAG(param, HYUNDAI_PARAM_CANFD_LKA_STEER_MSG_ALT);
+  const bool hyundai_canfd_daw_suppression = GET_FLAG(param, HYUNDAI_PARAM_CANFD_DAW_SUPPRESSION);
 
   safety_config ret;
   if (hyundai_longitudinal) {
@@ -394,7 +401,11 @@ static safety_config hyundai_canfd_init(uint16_t param) {
 
       SET_RX_CHECKS(hyundai_canfd_lka_steer_msg_rx_checks, ret);
       if (hyundai_canfd_lka_steer_msg_alt) {
-        SET_TX_MSGS(HYUNDAI_CANFD_LKA_STEER_MSG_ALT_TX_MSGS, ret);
+        if (hyundai_canfd_daw_suppression) {
+          SET_TX_MSGS(HYUNDAI_CANFD_LKA_STEER_MSG_ALT_DAW_TX_MSGS, ret);
+        } else {
+          SET_TX_MSGS(HYUNDAI_CANFD_LKA_STEER_MSG_ALT_TX_MSGS, ret);
+        }
       } else {
         SET_TX_MSGS(HYUNDAI_CANFD_LKA_STEER_MSG_TX_MSGS, ret);
       }

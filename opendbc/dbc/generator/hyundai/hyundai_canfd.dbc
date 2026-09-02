@@ -166,6 +166,7 @@ BO_ 282 FR_CMR_01_10ms: 16 FR_CMR
  SG_ iHBAref_ILLAmbtSta : 37|2@1+ (1,0) [0|3] "" IBU_HS,ICU,vBDM
  SG_ FCA_Equip_MFC : 39|3@1+ (1,0) [0|0] "" ADAS_DRV,RR_C_RDR,vBDM
  SG_ HBA_OptUsmSta : 42|2@1+ (1,0) [0|3] "" CLU,H_U_MM
+ SG_ FR_CMR_Reserved44 : 44|1@1+ (1,0) [0|1] "" XXX
  SG_ FCAref_FusSta : 45|3@1+ (1,0) [0|0] "" vBDM
  SG_ DAW_LVDA_PUDis : 48|2@1+ (1,0) [0|0] "" CLU,vBDM
  SG_ DAW_LVDA_OptUsmSta : 50|2@1+ (1,0) [0|3] "" CLU,H_U_MM,vBDM
@@ -174,9 +175,12 @@ BO_ 282 FR_CMR_01_10ms: 16 FR_CMR
  SG_ DAW_WrnMsgSta : 59|3@1+ (1,0) [0|0] "" CLU
  SG_ DAW_TimeRstReq : 62|2@1+ (1,0) [0|0] "" CLU
  SG_ DAW_SnstvtyModRetVal : 64|3@1+ (1,0) [0|0] "" CLU,H_U_MMz
+ SG_ FR_CMR_Reserved67 : 67|18@1+ (1,0) [0|262143] "" XXX
  SG_ FR_CMR_SCCEquipSta : 85|2@1+ (1,0) [0|3] "" CGW
+ SG_ FR_CMR_Reserved87 : 87|9@1+ (1,0) [0|511] "" XXX
  SG_ FR_CMR_ReqADASMapMsgVal : 96|16@1+ (1,0) [0|65535] "" CGW
  SG_ FR_CMR_SwVer1Val : 112|4@1+ (1,0) [0|15] "" CGW
+ SG_ FR_CMR_Reserved116 : 116|4@1+ (1,0) [0|15] "" XXX
  SG_ FR_CMR_SwVer2Val : 120|8@1+ (1,0) [0|255] "" CGW
 
 BO_ 293 STEERING_SENSORS: 16 XXX

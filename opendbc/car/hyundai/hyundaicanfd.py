@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 from opendbc.car import CanBusBase
 from opendbc.car.crc import CRC16_XMODEM
@@ -61,10 +63,6 @@ def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_torque,
       "ADAS_ACIAnglTqRedcGainVal": apply_torque if lat_active else 0,
     }
 
-  # OVERRIDE DAW VALUES AFTER ANGLE MERGE
-  values["DAW_WrnMsgSta"] = 0  # Forces coffee cup popup status to 0 (No Warning)
-  values["DAW_SysSta"] = 1     # Forces fatigue level to 1 (Normal/Attentive)
-
   ret = []
   if CP.flags & HyundaiFlags.CANFD_LKA_STEER_MSG:
     lkas_msg = "LKAS_ALT" if CP.flags & HyundaiFlags.CANFD_LKA_STEER_MSG_ALT else "LKAS"
@@ -75,6 +73,20 @@ def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_torque,
     ret.append(packer.make_can_msg("LFA", CAN.ECAN, values))
 
   return ret
+
+
+def create_daw_suppression(packer, CAN, fr_cmr_01):
+  values = copy.copy(fr_cmr_01)
+  values.update({
+    "FR_CMR_AlvCnt1Val": (int(values["FR_CMR_AlvCnt1Val"]) + 1) & 0xFF,
+    "DAW_SysSta": 1,
+    "DAW_WrnMsgSta": 0,
+  })
+
+  address, dat, bus = packer.make_can_msg("FR_CMR_01_10ms", CAN.ECAN, values)
+  dat = bytearray(dat)
+  dat[0:2] = hkg_can_fd_checksum(address, None, dat).to_bytes(2, "little")
+  return address, bytes(dat), bus
 
 
 def create_suppress_lfa(packer, CAN, lfa_block_msg, lka_steering_alt):

@@ -89,6 +89,7 @@ class HyundaiSafetyFlags(IntFlag):
   FCEV_GAS = 256
   ALT_LIMITS_2 = 512
   CANFD_ANGLE_STEERING = 1024
+  CANFD_DAW_SUPPRESSION = 2048
 
 
 # Hyundai/Kia/Genesis SCC (Smart Cruise Control) and steering architecture:
@@ -171,6 +172,7 @@ class HyundaiFlags(IntFlag):
   ALT_LIMITS_2 = 2 ** 26
 
   CANFD_ANGLE_STEERING = 2 ** 27
+  CANFD_DAW_SUPPRESSION = 2 ** 28
 
 
 @dataclass
@@ -428,7 +430,7 @@ class CAR(Platforms):
                      car_parts=CarParts.common([CarHarness.hyundai_q]))
     ],
     HYUNDAI_IONIQ_5.specs,
-    flags=HyundaiFlags.EV | HyundaiFlags.CANFD_ANGLE_STEERING,
+    flags=HyundaiFlags.EV | HyundaiFlags.CANFD_ANGLE_STEERING | HyundaiFlags.CANFD_DAW_SUPPRESSION,
   )
   HYUNDAI_IONIQ_6 = HyundaiCanFDPlatformConfig(
     [

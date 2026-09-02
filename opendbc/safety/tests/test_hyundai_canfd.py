@@ -552,6 +552,19 @@ class TestHyundaiCanfdLKASteeringAltAngle(TestHyundaiCanfdAngleSteering):
     pass
 
 
+class TestHyundaiCanfdLKASteeringAltAngleDaw(TestHyundaiCanfdLKASteeringAltAngle):
+
+  TX_MSGS = [[0x110, 0], [0x11A, 1], [0x1CF, 1], [0x362, 0]]
+
+  def setUp(self):
+    self.packer = CANPackerSafety("hyundai_canfd_generated")
+    self.safety = libsafety_py.libsafety
+    self.safety.set_safety_hooks(CarParams.SafetyModel.hyundaiCanfd, HyundaiSafetyFlags.CANFD_LKA_STEER_MSG |
+                                 HyundaiSafetyFlags.CANFD_LKA_STEER_MSG_ALT | HyundaiSafetyFlags.CANFD_ANGLE_STEERING |
+                                 HyundaiSafetyFlags.CANFD_DAW_SUPPRESSION)
+    self.safety.init_tests()
+
+
 class TestHyundaiCanfdLKASteeringLongEV(HyundaiLongitudinalBase, TestHyundaiCanfdLKASteeringEV):
 
   TX_MSGS = [[0x50, 0], [0x1CF, 1], [0x2A4, 0], [0x51, 0], [0x730, 1], [0x12a, 1], [0x160, 1],

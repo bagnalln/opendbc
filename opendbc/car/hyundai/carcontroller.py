@@ -287,6 +287,12 @@ class CarController(CarControllerBase, EsccCarController, LeadDataCarController,
     can_sends.extend(hyundaicanfd.create_steering_messages(self.packer, self.CP, self.CAN, CC.enabled, apply_steer_req, apply_torque, self.apply_angle_last
                                                            , self.lkas_icon))
 
+    # The Ioniq 5 PE camera can request a false coffee-cup warning during angle control.
+    # Send the next counter immediately after the stock warning frame so receivers prefer
+    # this no-warning state without transmitting a second 0x11A during normal operation.
+    if self.CP.flags & HyundaiFlags.CANFD_DAW_SUPPRESSION and CC.latActive and CS.fr_cmr_01.get("DAW_WrnMsgSta") == 1:
+      can_sends.append(hyundaicanfd.create_daw_suppression(self.packer, self.CAN, CS.fr_cmr_01))
+
     # prevent LFA from activating on LKA steering cars by sending "no lane lines detected" to ADAS ECU
     if self.frame % 5 == 0 and lka_steering:
       can_sends.append(hyundaicanfd.create_suppress_lfa(self.packer, self.CAN, CS.lfa_block_msg,
